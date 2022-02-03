@@ -1,8 +1,12 @@
 const express = require('express');
+var morgan = require('morgan'); // logging middleware
+
 const homeCard = require('./HomeCard');
 const baseUrl = 'https://b250-83-252-130-101.ngrok.io';
 
 const app = express();
+
+app.use(morgan('combined'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -29,11 +33,36 @@ app.post('/', (req, res) => {
     });
 });
 
-// form response
-app.post('/ui/resp', (req, res) => {
+// // // text input
+
+app.post('/ui/text_input', (req, res) => {
+    const card = {
+        name : 'card',
+        header: {},
+        sections: [
+            { widgets: [
+                { textInput: {
+                    name : 'text_in',
+                    label : 'Text Input',
+                    value : 'write something here'
+                }} ,
+                { buttonList : {
+                    buttons: [
+                        { text : 'Go' ,
+                          onClick : {
+                              action : {
+                                  function : baseUrl + '/ui/text_input/resp' } } } ] } } ]} ]};
+    const act = {
+        action: { navigations : [ { pushCard : card } ] }
+    };
+    res.json( act );
+});
+
+app.post('/ui/text_input/resp', (req, res) => {
     const event = req.body.commonEventObject;
     const formData = event.formInputs;
-    const fdata = formData.form_test.stringInputs.value;
+    console.log( JSON.stringify( formData ) );
+    const fdata = formData.text_in.stringInputs.value;
     const c = {
         name : 'card',
         header : {},
@@ -42,26 +71,19 @@ app.post('/ui/resp', (req, res) => {
                 widgets : [
                     {
                         textParagraph : {
-                            text : 'You selected : ' + fdata }
-                    }
-                ]
-            }
-        ]
-    };
+                            text : 'You selected : ' + fdata } } ] } ] };
     const response = {
         renderActions : {
             action : {
                 navigations : [
-                    { pushCard : c
-                    }
-                ]
-        }
-        }
-    };
+                    { pushCard : c } ] } } };
     res.json( response );
 });
 
-app.post('/ui', (req, res) => {
+
+// // // RADIO buttons
+
+app.post('/ui/radio', (req, res) => {
     const card = {
         name : 'card',
         header: {},
@@ -82,23 +104,37 @@ app.post('/ui', (req, res) => {
                         { text : 'Go' ,
                           onClick : {
                               action : {
-                                  function : baseUrl + '/ui/resp'
-                              }
-                          }
-                        }
-                    ]
-                }
-                }
-            ]}
-        ]
-    };
+                                  function : baseUrl + '/ui/radio/resp' } } } ] } } ]} ]};
     const act = {
         action: { navigations : [ { pushCard : card } ] }
     };
     res.json( act );
 });
 
+// form response
+app.post('/ui/radio/resp', (req, res) => {
+    const event = req.body.commonEventObject;
+    const formData = event.formInputs;
+    const fdata = formData.form_test.stringInputs.value;
+    const c = {
+        name : 'card',
+        header : {},
+        sections : [
+            {
+                widgets : [
+                    {
+                        textParagraph : {
+                            text : 'You selected : ' + fdata } } ] } ] };
+    const response = {
+        renderActions : {
+            action : {
+                navigations : [
+                    { pushCard : c } ] } } };
+    res.json( response );
+});
 
+
+// // // request user authorization to read editor file
 
 app.post('/requestFileScope', (req, res) => {
   res.json({
