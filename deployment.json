@@ -1,0 +1,30 @@
+{
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  "addOns": {
+    "common": {
+      "name": "Test Add-on",
+      "logoUrl": "https://fonts.gstatic.com/s/i/googlematerialicons/tour/v6/black-24dp/1x/gm_tour_black_24dp.png",
+      "homepageTrigger": {
+        "runFunction": "https://03ea1b97c629.ngrok.io/"
+      }
+    },
+    "docs": {
+      "onFileScopeGrantedTrigger": {
+        "runFunction": "https://03ea1b97c629.ngrok.io/onFileScopeGranted"
+      }
+    },
+    "sheets": {
+      "onFileScopeGrantedTrigger": {
+        "runFunction": "https://03ea1b97c629.ngrok.io/onFileScopeGranted"
+      }
+    },
+    "slides": {
+      "onFileScopeGrantedTrigger": {
+        "runFunction": "https://03ea1b97c629.ngrok.io/onFileScopeGranted"
+      }
+    }
+  }
+}
