@@ -42,27 +42,47 @@ app.post('/ui/text_input', (req, res) => {
         sections: [
             { widgets: [
                 { textInput: {
-                    name : 'text_in',
+                    name : 'text_in_1',
                     label : 'Text Input',
-                    value : 'write something here'
-                }} ,
+                    value : 'in 1',
+                    autoCompleteAction : {
+                        function : baseUrl + '/ui/text_input/ac' },
+                    multipleSuggestions : true
+                },
+                },
                 { buttonList : {
                     buttons: [
                         { text : 'Go' ,
                           onClick : {
                               action : {
-                                  function : baseUrl + '/ui/text_input/resp' } } } ] } } ]} ]};
+                                  function : baseUrl + '/ui/text_input/resp' } } } ] } }
+                ]} ]};
     const act = {
         action: { navigations : [ { pushCard : card } ] }
     };
     res.json( act );
 });
 
+// autocomplete
+app.post('/ui/text_input/ac', (req, res) => {
+    const event = req.body.commonEventObject;
+    console.log( JSON.stringify( event ));
+    const c = {
+        autoComplete : {
+            items : [
+                { text : 'a' },
+                { text : 'b' }
+            ]
+        }
+    };
+    res.json( c );
+});
+
 app.post('/ui/text_input/resp', (req, res) => {
     const event = req.body.commonEventObject;
     const formData = event.formInputs;
     console.log( JSON.stringify( formData ) );
-    const fdata = formData.text_in.stringInputs.value;
+    const fdata1 = formData.text_in_1.stringInputs.value;
     const c = {
         name : 'card',
         header : {},
@@ -71,7 +91,7 @@ app.post('/ui/text_input/resp', (req, res) => {
                 widgets : [
                     {
                         textParagraph : {
-                            text : 'You selected : ' + fdata } } ] } ] };
+                            text : 'You wrote : ' + fdata1 } } ] } ] };
     const response = {
         renderActions : {
             action : {
