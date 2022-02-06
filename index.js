@@ -33,6 +33,94 @@ app.post('/', (req, res) => {
     });
 });
 
+
+// // // text input + validation
+app.post('/ui/text_input/validation', (req, res) => {
+    const card = {
+        name : 'tiv_card',
+        header : {},
+        sections : [
+            { widgets : [
+                { textInput : {
+                    name : 'tiv_1',
+                    value : '1',
+                    onChangeAction : {
+                        function : baseUrl + '/ui/text_input/validation/check'
+                    }
+                } },
+
+                { buttonList : {
+                    buttons: [
+                        { text : 'Go' ,
+                          onClick : {
+                              action : {
+                                  function : baseUrl + '/ui/text_input/validation/ok' } } } ] } }
+
+            ] }
+        ]
+    };
+    const act = {
+        action: { navigations : [ { pushCard : card } ] }
+    };
+    res.json( act );
+});
+
+// validation endpoint
+app.post('/ui/text_input/validation/check', (req, res) => {
+    const event = req.body.commonEventObject;
+    console.log( JSON.stringify( event ));
+
+    // extract form input value
+    const i = event.formInputs.tiv_1.stringInputs.value;
+
+    function wds( input ) {
+        const wd0 = { textInput : {
+            name : 'tiv_1',
+            value : (i > 0) ? i : 1,
+            onChangeAction : {
+                function : baseUrl + '/ui/text_input/validation/check'
+            }}};
+        const wd1 = { decoratedText : {
+            text : '<font color=\"#DB4437\">' + 'Must be > 1'+ '</font>'
+        }};
+        const wd2 = { buttonList : {
+            buttons: [
+                { text : 'Go' ,
+                  onClick : {
+                      action : {
+                          function : baseUrl + '/ui/text_input/validation/ok' } } } ] } }
+
+        const ret = (input > 0) ? [wd0, wd2] : [wd0, wd1, wd2];
+
+        return ret;
+
+    };
+
+    const card = {
+        name : 'card',
+        header: {},
+        sections: [
+            { widgets : wds( i ) }
+            ]
+    };
+
+    // NB : use RenderAction with stateChanged : true
+    const act = {
+        renderActions : {
+            action : { navigations : [ { updateCard : card } ] }
+        },
+        stateChanged : true
+    };
+
+    res.json( act );
+});
+
+app.post('/ui/text_input/validation/ok', (req, res) => {
+    const event = req.body.commonEventObject;
+    console.log( JSON.stringify( event ));
+});
+
+
 // // // text input
 
 app.post('/ui/text_input', (req, res) => {
@@ -44,12 +132,24 @@ app.post('/ui/text_input', (req, res) => {
                 { textInput: {
                     name : 'text_in_1',
                     label : 'Text Input',
-                    value : 'in 1',
+                    value : 'x',
                     autoCompleteAction : {
                         function : baseUrl + '/ui/text_input/ac' },
                     multipleSuggestions : true
-                },
-                },
+                }},
+
+                { selectionInput: {
+                    name : 'form_test',
+                    label : 'param_name',
+                    type : 'RADIO_BUTTON',
+                    items : [
+                        { text : 'a', value : 1 },
+                        { text : 'b', value : 2 },
+                        { text : 'c', value : 3 }
+                    ],
+                }},
+
+
                 { buttonList : {
                     buttons: [
                         { text : 'Go' ,
@@ -108,7 +208,7 @@ app.post('/ui/radio', (req, res) => {
         name : 'card',
         header: {},
         sections: [
-            {widgets: [
+            { widgets: [
                 { selectionInput: {
                     name : 'form_test',
                     label : 'param_name',
