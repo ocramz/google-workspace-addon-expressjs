@@ -118,6 +118,29 @@ app.post('/ui/text_input/validation/check', (req, res) => {
 app.post('/ui/text_input/validation/ok', (req, res) => {
     const event = req.body.commonEventObject;
     console.log( JSON.stringify( event ));
+    // const card = {
+    //     sections : [
+    //         { widgets : {
+    //             {
+    //                 textParagraph : {
+    //                     text : 'You wrote : ' + fdata1 }}
+    //         }}
+    //     ]
+    // };
+    const card = {
+        sections : [
+            { widgets : [
+                { textParagraph : { text : 'OK' }}
+            ]}
+        ]
+    };
+    const act = {
+        renderActions : {
+            action : { navigations : [ { pushCard : card } ] }
+        },
+        stateChanged : true
+    };
+    res.json( act );
 });
 
 
